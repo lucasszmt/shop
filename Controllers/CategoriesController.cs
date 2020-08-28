@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Shop.Data;
 using Shop.Models;
 
@@ -14,15 +16,17 @@ namespace Shop.Models
 
         [HttpGet]
         [Route("")]
-        public async Task<ActionResult<List<Category>>> Get()
+        public async Task<ActionResult<List<Category>>> Get([FromServices] DataContext context)
         {
-            return new List<Category>();
+            var categories = await context.Categories.AsNoTracking().ToListAsync(); // utilizando o AsNoTracking para que o entity não detecte mudanças
+            return categories;
         }
 
         [HttpGet]
         [Route("{id:int}")]
-        public async Task<ActionResult<Category>> Get(int id)
+        public async Task<ActionResult<Category>> Get([FromServices] DataContext context, int id)
         {
+            var category = await context.Categories.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
             return new Category();
         }
 
@@ -47,7 +51,7 @@ namespace Shop.Models
 
         [HttpPut]
         [Route("{id:int}")]
-        public async Task<ActionResult<Category>> Put(int id, Category model)
+        public async Task<ActionResult<Category>> Put(int id, [FromBody] Category model, [FromServices] DataContext context)
         {
 
             if (model.Id != id)
@@ -56,14 +60,44 @@ namespace Shop.Models
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(model);
+            try
+            {
+                context.Entry<Category>(model).State = EntityState.Modified;
+                await context.SaveChangesAsync();
+                return model;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return BadRequest(new { message = "Esse registro já foi atualizado" });
+            }
+            catch (Exception)
+            {
+                return BadRequest(new { message = "Não foi possível atualizar a categoria" });
+
+            }
         }
 
         [HttpDelete]
         [Route("{id:int}")]
-        public async Task<ActionResult<Category>> Delete(int id, Category model)
+        public async Task<ActionResult<Category>> Delete(int id, [FromBody] Category model, [FromServices] DataContext context)
         {
-            return Ok();
+            var category = await context.Categories.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            if (category == null)
+            {
+                return NotFound(new { message = "Categoria não encontrada" });
+            }
+
+            try
+            {
+                context.Categories.Remove(category);
+                await context.SaveChangesAsync();
+                return category;
+            }
+            catch (System.Exception)
+            {
+
+                return BadRequest(new { message = "Não foi possível  remover a categoria" });
+            }
         }
     }
 }

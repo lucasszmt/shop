@@ -28,7 +28,7 @@ namespace Shop
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddDbContext<DataContext>(opt => opt.UseInMemoryDatabase("Database")); // Injeção de dependencia
+            services.AddDbContext<DataContext>(opt => opt.UseInMemoryDatabase("Database")); // Injeção de dependencia com banco em memória
             services.AddScoped<DataContext, DataContext>(); //Metodo de conexao com o banco
         }
 
