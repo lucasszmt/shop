@@ -27,7 +27,7 @@ namespace Shop.Models
         public async Task<ActionResult<Category>> Get([FromServices] DataContext context, int id)
         {
             var category = await context.Categories.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
-            return new Category();
+            return Ok(category);
         }
 
         [HttpPost]
