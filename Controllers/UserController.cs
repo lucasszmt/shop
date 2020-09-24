@@ -12,7 +12,7 @@ using Shop.Services;
 
 namespace Shop.Controllers
 {
-    [Route("users")]
+    [Route("v1/users")]
     public class UserController : Controller
     {
         [HttpGet]
@@ -114,7 +114,7 @@ namespace Shop.Controllers
 
         [HttpGet]
         [Route("teste")]
-        [Authorize(Roles = "manager")]
+        [Authorize(Roles = "employee")]
         public async Task<ActionResult<dynamic>> Teste([FromBody] User model) 
         {
             return Ok(new {teste = "teste"});

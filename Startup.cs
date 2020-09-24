@@ -15,6 +15,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Logging;
 using Shop.Data;
+using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.OpenApi.Models;
 
 namespace Shop
 {
@@ -29,7 +31,17 @@ namespace Shop
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
+
         {
+            // compressão de json
+            services.AddResponseCompression(options =>
+            {
+                options.Providers.Add<GzipCompressionProvider>();
+                options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "application/json" });
+            });
+
+            // services.AddResponseCaching();
+
             services.AddControllers();
 
             var key = Encoding.ASCII.GetBytes(Settings.Secret);
@@ -57,6 +69,12 @@ namespace Shop
                     )
                 );
             services.AddScoped<DataContext, DataContext>(); //Metodo de conexao com o banco
+
+             // Register the Swagger generator, defining 1 or more Swagger documents
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Shop Api", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,11 +83,25 @@ namespace Shop
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-            }
+            }   
+
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Shop API V1");
+            });
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(x => x
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
 
             app.UseAuthentication();
             app.UseAuthorization();

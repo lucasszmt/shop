@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shop.Data;
@@ -10,12 +11,15 @@ namespace Shop.Models
 {
 
     [ApiController]
-    [Route("categories")]
+    [Route("v1/categories")]
+    [ResponseCache(VaryByHeader = "User-Agent", Location = ResponseCacheLocation.Any, Duration = 30)]
+    // [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public class CategoriesController : ControllerBase
     {
 
         [HttpGet]
         [Route("")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Category>>> Get([FromServices] DataContext context)
         {
             var categories = await context.Categories.AsNoTracking().ToListAsync(); // utilizando o AsNoTracking para que o entity não detecte mudanças
@@ -24,6 +28,7 @@ namespace Shop.Models
 
         [HttpGet]
         [Route("{id:int}")]
+        [AllowAnonymous]
         public async Task<ActionResult<Category>> Get([FromServices] DataContext context, int id)
         {
             var category = await context.Categories.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
@@ -32,6 +37,7 @@ namespace Shop.Models
 
         [HttpPost]
         [Route("")]
+        [Authorize(Roles = "employee")]
         public async Task<ActionResult<List<Category>>> Post([FromBody] Category model, [FromServices] DataContext context)
         {
             try
@@ -51,6 +57,7 @@ namespace Shop.Models
 
         [HttpPut]
         [Route("{id:int}")]
+        [Authorize(Roles = "employee")]
         public async Task<ActionResult<Category>> Put(int id, [FromBody] Category model, [FromServices] DataContext context)
         {
 
@@ -79,6 +86,7 @@ namespace Shop.Models
 
         [HttpDelete]
         [Route("{id:int}")]
+        [Authorize(Roles = "manager, employee")]
         public async Task<ActionResult<Category>> Delete(int id, [FromBody] Category model, [FromServices] DataContext context)
         {
             var category = await context.Categories.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);

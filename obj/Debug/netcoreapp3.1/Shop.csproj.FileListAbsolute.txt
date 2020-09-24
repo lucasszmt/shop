@@ -123,3 +123,8 @@ C:\Users\lucas\source\shop\obj\Debug\netcoreapp3.1\staticwebassets\Shop.StaticWe
 C:\Users\lucas\source\shop\obj\Debug\netcoreapp3.1\Shop.dll
 C:\Users\lucas\source\shop\obj\Debug\netcoreapp3.1\Shop.pdb
 C:\Users\lucas\source\shop\obj\Debug\netcoreapp3.1\Shop.genruntimeconfig.cache
+C:\Users\lucas\source\shop\bin\Debug\netcoreapp3.1\Microsoft.OpenApi.dll
+C:\Users\lucas\source\shop\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\lucas\source\shop\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\lucas\source\shop\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\lucas\source\shop\obj\Debug\netcoreapp3.1\Shop.MvcApplicationPartsAssemblyInfo.cs
