@@ -62,12 +62,12 @@ namespace Shop
                    };
                });
 
-            services.AddDbContext<DataContext>(opt => opt.UseInMemoryDatabase("Database")); // Injeção de dependencia com banco em memória
-            // services.AddDbContext<DataContext>(
-            //     opt => opt.UseSqlServer(
-            //         Configuration.GetConnectionString("connectionString")
-            //         )
-            //     );
+            // services.AddDbContext<DataContext>(opt => opt.UseInMemoryDatabase("Database")); // Injeção de dependencia com banco em memória
+            services.AddDbContext<DataContext>(
+                opt => opt.UseSqlServer(
+                    Configuration.GetConnectionString("connectionString")
+                    )
+                );
             services.AddScoped<DataContext, DataContext>(); //Metodo de conexao com o banco
 
              // Register the Swagger generator, defining 1 or more Swagger documents
